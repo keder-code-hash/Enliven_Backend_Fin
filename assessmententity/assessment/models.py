@@ -1,3 +1,4 @@
+from email.policy import default
 from djongo import models
 
 # Create your models here.
@@ -29,6 +30,9 @@ class Assessment(models.Model):
     noq = models.PositiveIntegerField(default=0)
     fmarks = models.PositiveIntegerField(default=0)
     duration = models.TimeField()
+    ongoing = models.BooleanField(default=True)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
     created_by = models.CharField(max_length=265, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
