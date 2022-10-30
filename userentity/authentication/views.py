@@ -1,10 +1,8 @@
-from ast import Return
-import site
 from rest_framework.views import APIView
-from rest_framework.response import Response 
+from rest_framework.response import Response
 from authentication.permissions import IsOwnerOrReadOnly
 from .models import Register
-from .serializers import ResetPasswordEmailSentSerializers, ResetPasswordSerializers, UserSerializers,RegisterSerializers,RegisterUpdateSerializer,LoginSerializer,LogoutSerializer
+from .serializers import ResetPasswordEmailSentSerializers, ResetPasswordSerializers, UserSerializers,RegisterSerializers,LoginSerializer,LogoutSerializer
 from rest_framework import serializers, status
 from rest_framework import generics
 from rest_framework import permissions 
@@ -25,6 +23,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
+from drf_yasg.utils import swagger_auto_schema
  
 # permission class is set to authinticate or read only
 # persmission
@@ -43,8 +42,9 @@ class UserView(APIView):
 
 class RegisterView(APIView):
     # permission_classes = [IsAuthenticated]
-    def post(self,request,format=None):
-        if Register.objects.filter(email__iexact=request.data["email"]).exists():
+    @swagger_auto_schema(request_body=RegisterSerializers)
+    def post(self,request):
+        if not Register.objects.filter(email__iexact=request.data["email"]).exists():
             serialized=RegisterSerializers(data=request.data)
             if serialized.is_valid():
                 serialized.save()
@@ -55,6 +55,7 @@ class RegisterView(APIView):
             return Response("User Already exists",status.HTTP_400_BAD_REQUEST)
 
     # permission_classes=[IsOwnerOrReadOnly]
+    @swagger_auto_schema(request_body=RegisterSerializers)
     def put(self,request,format=None):
         if Register.objects.filter(email__iexact=request.data['email']).exists():
             reg_user=Register.objects.get(email=request.data['email'])
@@ -74,14 +75,6 @@ class LogInView(generics.GenericAPIView):
     def post(self,request):
         serializers_data = self.serializer_class(data=request.data)
         serializers_data.is_valid(raise_exception=True)
-
-        email = serializers_data.data.get("email")
-        log_in_obj = Register.objects.filter(email__iexact=email)
-        log_in_obj_json = serializers.serialize("json", log_in_obj)
-        # print(log_in_obj_json[0])
-
-        # serialized_user_data = UserSerializers(data = log_in_obj)
-        # serialized_user_data.is_valid(raise_exception=True)
         return Response(serializers_data.data,status=status.HTTP_200_OK)
 
 class LogOutView(APIView):
