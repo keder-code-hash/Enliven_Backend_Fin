@@ -29,13 +29,8 @@ from drf_yasg.utils import swagger_auto_schema
 # persmission
 class UserView(APIView): 
     def get(self,request,format=None):
-        users=Register.objects.all()
-        # tok = users.tokens()
-        # curr_site = get_current_site(request=request).domain
-        # site_name = get_current_site(request=request).name
+        users=Register.objects.all() 
         return Response(UserSerializers(users,many=True).data) 
-        # return Response([curr_site]) 
-
 
 
 ############## Register View ##############################
