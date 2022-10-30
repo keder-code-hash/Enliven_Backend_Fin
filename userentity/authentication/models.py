@@ -26,6 +26,10 @@ class CustomAccountManager(BaseUserManager):
 
 ##Actual register model for a user
 
+platform=(
+    ("Default",'df'),
+    ("Google",'gl')
+)
 
 class Register(AbstractBaseUser, PermissionsMixin):
     # id = models.AutoField( primary_key=True)
@@ -47,7 +51,7 @@ class Register(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-
+    platform = models.CharField(max_length=7,choices=platform,default='default')
     # define a object of customUserManager
     objects = CustomAccountManager()
 
