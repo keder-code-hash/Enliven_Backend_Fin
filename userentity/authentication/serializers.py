@@ -15,6 +15,8 @@ class UserSerializers(serializers.ModelSerializer):
         fields = "__all__"
 
 
+
+
 class RegisterSerializers(serializers.ModelSerializer):  
 
     class Meta:
